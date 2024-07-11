@@ -1,5 +1,6 @@
 import Button from "./component/Button";
 import Container from "./component/Container";
+import EmptyState from "./component/EmptyState";
 import LoadingSpinner from "./component/LoadingSpinner";
 import TaskCard from "./component/TaskCard";
 
@@ -55,12 +56,13 @@ function App() {
           </Button>
         </div>
         {/* TASKS */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* <div className="grid grid-cols-3 gap-4">
           <TaskCard />
           <TaskCard />
           <TaskCard />
-        </div>
+        </div> */}
         {/* <LoadingSpinner /> */}
+        {/* <EmptyState /> */}
       </div>
 
       {/* ADD NEW TASK BUTTON */}
