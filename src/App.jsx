@@ -3,8 +3,10 @@ import Container from "./component/Container";
 import EmptyState from "./component/EmptyState";
 import LoadingSpinner from "./component/LoadingSpinner";
 import TaskCard from "./component/TaskCard";
+import { useGetTasksQuery } from "./features/taskApi/taskApiSlice";
 
 function App() {
+  const { data, isLoading } = useGetTasksQuery();
   return (
     <Container>
       {/* SECTION HEADING */}
@@ -56,13 +58,17 @@ function App() {
           </Button>
         </div>
         {/* TASKS */}
-        {/* <div className="grid grid-cols-3 gap-4">
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-        </div> */}
-        {/* <LoadingSpinner /> */}
-        {/* <EmptyState /> */}
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : data.length > 0 ? (
+          <div className="grid grid-cols-3 gap-4">
+            {data.map((task) => (
+              <TaskCard key={task?._id} task={task} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState />
+        )}
       </div>
 
       {/* ADD NEW TASK BUTTON */}

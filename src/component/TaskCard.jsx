@@ -1,23 +1,25 @@
+import PropTypes from "prop-types";
 import Button from "./Button";
 
-const TaskCard = () => {
+const TaskCard = ({ task }) => {
   return (
     <div className="bg-gray-100 text-gray-950 rounded-md">
       <div className="flex flex-col justify-between p-6 lg:p-10 gap-2">
         <div className="space-y-2">
           {/* TASK STATUS */}
-          <span className="px-2 py-1.5 text-xs capitalize rounded-full bg-emerald-300 w-fit">
-            Completed
+          <span
+            className={`px-3.5 py-1.5 text-xs capitalize rounded-full w-fit ${
+              task?.status.toLowerCase() === "completed"
+                ? "bg-emerald-300"
+                : "bg-amber-300"
+            } `}
+          >
+            {task?.status}
           </span>
           {/* TASK TITLE */}
-          <h1 className="text-xl font-semibold">
-            Title: Lorem ipsum dolor sit.
-          </h1>
+          <h1 className="text-xl font-semibold">{task?.name}</h1>
           {/* TASK DESCRIPTION */}
-          <p className="pt-1.5 text-justify">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste,
-            reprehenderit adipisci tempore voluptas laborum quod.
-          </p>
+          <p className="pt-1.5 text-justify">{task?.description}</p>
         </div>
         <div className="flex items-center justify-between pt-2">
           {/* MARK AS COMPETE BUTTON */}
@@ -86,6 +88,10 @@ const TaskCard = () => {
       </div>
     </div>
   );
+};
+
+TaskCard.propTypes = {
+  task: PropTypes.object,
 };
 
 export default TaskCard;
