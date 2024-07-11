@@ -1,14 +1,30 @@
+import toast, { Toaster } from "react-hot-toast";
+import {
+  useDeleteTaskMutation,
+  useGetTasksQuery,
+} from "./features/taskApi/taskApiSlice";
 import Button from "./component/Button";
+import TaskCard from "./component/TaskCard";
 import Container from "./component/Container";
 import EmptyState from "./component/EmptyState";
 import LoadingSpinner from "./component/LoadingSpinner";
-import TaskCard from "./component/TaskCard";
-import { useGetTasksQuery } from "./features/taskApi/taskApiSlice";
 
 function App() {
   const { data, isLoading } = useGetTasksQuery();
+  const [deleteTask] = useDeleteTaskMutation();
+
+  // delete task from db
+  const handleDelete = async (id) => {
+    try {
+      await deleteTask(id);
+      toast.success("Task Deleted");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <Container>
+      <Toaster />
       {/* SECTION HEADING */}
       <div className="text-center">
         <h1 className="text-4xl font-bold">TaskMaster</h1>
@@ -63,7 +79,7 @@ function App() {
         ) : data.length > 0 ? (
           <div className="grid grid-cols-3 gap-4">
             {data.map((task) => (
-              <TaskCard key={task?._id} task={task} />
+              <TaskCard key={task?._id} task={task} deleteTask={handleDelete} />
             ))}
           </div>
         ) : (

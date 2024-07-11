@@ -1,7 +1,18 @@
 import PropTypes from "prop-types";
 import Button from "./Button";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  closeDeleteModal,
+  openDeleteModal,
+} from "../features/modalState/modalStateSlice";
+import DeleteModal from "./modals/DeleteModal";
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, deleteTask }) => {
+  const dispatch = useDispatch();
+  const { addModalState, updateModalState, deleteModalState } = useSelector(
+    (state) => state.modalState
+  );
+
   return (
     <div className="bg-gray-100 text-gray-950 rounded-md">
       <div className="flex flex-col justify-between p-6 lg:p-10 gap-2">
@@ -64,6 +75,7 @@ const TaskCard = ({ task }) => {
             </Button>
             {/* DELETE TASK BUTTON */}
             <Button
+              onClick={() => dispatch(openDeleteModal())}
               small={true}
               title="Delete Task"
               className="text-white bg-red-400"
@@ -83,6 +95,11 @@ const TaskCard = ({ task }) => {
                 />
               </svg>
             </Button>
+            <DeleteModal
+              isOpen={deleteModalState}
+              closeModal={() => dispatch(closeDeleteModal())}
+              handleDelete={() => deleteTask(task?._id)}
+            />
           </div>
         </div>
       </div>
@@ -92,6 +109,7 @@ const TaskCard = ({ task }) => {
 
 TaskCard.propTypes = {
   task: PropTypes.object,
+  deleteTask: PropTypes.func,
 };
 
 export default TaskCard;
