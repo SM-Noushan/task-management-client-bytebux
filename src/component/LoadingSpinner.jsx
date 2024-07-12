@@ -1,6 +1,12 @@
-const LoadingSpinner = () => {
+import PropTypes from "prop-types";
+
+const LoadingSpinner = ({ modal = false }) => {
   return (
-    <div className="h-[70vh] flex flex-col justify-center items-center">
+    <div
+      className={`${
+        modal ? "h-[20vh]" : "h-[70vh]"
+      } flex flex-col justify-center items-center`}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -17,6 +23,10 @@ const LoadingSpinner = () => {
       </svg>
     </div>
   );
+};
+
+LoadingSpinner.propTypes = {
+  modal: PropTypes.bool,
 };
 
 export default LoadingSpinner;
