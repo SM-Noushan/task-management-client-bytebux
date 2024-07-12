@@ -2,6 +2,7 @@ import toast, { Toaster } from "react-hot-toast";
 import {
   useDeleteTaskMutation,
   useGetTasksQuery,
+  useUpdateTaskMutation,
 } from "./features/taskApi/taskApiSlice";
 import Button from "./component/Button";
 import TaskCard from "./component/TaskCard";
@@ -11,7 +12,19 @@ import LoadingSpinner from "./component/LoadingSpinner";
 
 function App() {
   const { data, isLoading } = useGetTasksQuery();
+  const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
+
+  // update task in db
+  const handleUpdate = async (id, updatedTask, status = false) => {
+    try {
+      await updateTask({ id, updatedTask });
+      if (status) return toast.success("Status updated"); //for mark as completed func
+      toast.success("Task updated"); //for updating task details
+    } catch (error) {
+      toast.error(error?.message || "Error! Try again");
+    }
+  };
 
   // delete task from db
   const handleDelete = async (id) => {
@@ -19,7 +32,7 @@ function App() {
       await deleteTask(id);
       toast.success("Task Deleted");
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.message || "Error! Try again");
     }
   };
   return (
@@ -79,7 +92,12 @@ function App() {
         ) : data.length > 0 ? (
           <div className="grid grid-cols-3 gap-4">
             {data.map((task) => (
-              <TaskCard key={task?._id} task={task} deleteTask={handleDelete} />
+              <TaskCard
+                key={task?._id}
+                task={task}
+                updateTask={handleUpdate}
+                deleteTask={handleDelete}
+              />
             ))}
           </div>
         ) : (

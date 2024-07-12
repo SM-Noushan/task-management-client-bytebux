@@ -1,13 +1,13 @@
-import PropTypes from "prop-types";
-import Button from "./Button";
 import { useDispatch, useSelector } from "react-redux";
 import {
   closeDeleteModal,
   openDeleteModal,
 } from "../features/modalState/modalStateSlice";
 import DeleteModal from "./modals/DeleteModal";
+import PropTypes from "prop-types";
+import Button from "./Button";
 
-const TaskCard = ({ task, deleteTask }) => {
+const TaskCard = ({ task, updateTask, deleteTask }) => {
   const dispatch = useDispatch();
   const { addModalState, updateModalState, deleteModalState } = useSelector(
     (state) => state.modalState
@@ -34,8 +34,16 @@ const TaskCard = ({ task, deleteTask }) => {
         </div>
         <div className="flex items-center justify-between pt-2">
           {/* MARK AS COMPETE BUTTON */}
-          <Button small={true} className="text-blue-700 border-0 !px-0">
-            <span>Mark As Complete</span>
+          <Button
+            onClick={() => updateTask(task?._id, { status: "Completed" }, true)}
+            disabled={task?.status.toLowerCase() === "completed" ? true : false}
+            small={true}
+            className="text-blue-700 border-0 !px-0"
+          >
+            <span>
+              {task?.status.toLowerCase() === "completed" ? "Marked" : "Mark"}{" "}
+              As Completed
+            </span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -109,6 +117,7 @@ const TaskCard = ({ task, deleteTask }) => {
 
 TaskCard.propTypes = {
   task: PropTypes.object,
+  updateTask: PropTypes.func,
   deleteTask: PropTypes.func,
 };
 
