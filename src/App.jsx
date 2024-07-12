@@ -1,19 +1,58 @@
+import { setErrors } from "./features/formValidation/formValidationSlice";
+import LoadingSpinner from "./component/LoadingSpinner";
+import { useDispatch, useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import {
+  useCreateTaskMutation,
   useDeleteTaskMutation,
   useGetTasksQuery,
   useUpdateTaskMutation,
 } from "./features/taskApi/taskApiSlice";
+import {
+  closeAddModal,
+  openAddModal,
+} from "./features/modalState/modalStateSlice";
 import Button from "./component/Button";
 import TaskCard from "./component/TaskCard";
 import Container from "./component/Container";
 import EmptyState from "./component/EmptyState";
-import LoadingSpinner from "./component/LoadingSpinner";
+import AddModal from "./component/modals/AddModal";
+import formValidation from "./utils/form/formValidation";
 
 function App() {
+  const { addModalState } = useSelector((state) => state.modalState);
   const { data, isLoading } = useGetTasksQuery();
+  const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
+  const dispatch = useDispatch();
+
+  // FORM VALIDATION
+  const validateForm = (data) => {
+    const newErrors = formValidation(data);
+    dispatch(setErrors(newErrors));
+    if (!newErrors.title && !newErrors.description && !newErrors.status)
+      return true;
+    else return false;
+  };
+
+  // add new task
+  const handleNewTaskForm = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const description = form.description.value;
+    const status = form.status.value;
+    const data = { name, description, status };
+    if (!validateForm(data)) return;
+    try {
+      await createTask(data);
+      dispatch(closeAddModal());
+      toast.success("Task added");
+    } catch (error) {
+      toast.error(error?.message || "Error! Try again");
+    }
+  };
 
   // update task in db
   const handleUpdate = async (id, updatedTask, status = false) => {
@@ -68,7 +107,11 @@ function App() {
             <h1 className="text-2xl font-bold">Task List</h1>
           </div>
           {/* ADD TASK BUTTON */}
-          <Button title={"Add New Task"} className="bg-blue-600 text-white">
+          <Button
+            onClick={() => dispatch(openAddModal())}
+            title={"Add New Task"}
+            className="bg-blue-600 text-white"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -104,6 +147,13 @@ function App() {
           <EmptyState />
         )}
       </div>
+
+      {/* ADD NEW TASK MODAL FORM */}
+      <AddModal
+        isOpen={addModalState}
+        closeModal={() => dispatch(closeAddModal())}
+        submitForm={handleNewTaskForm}
+      />
 
       {/* ADD NEW TASK BUTTON */}
       <div className="fixed bottom-[5.5%] right-[5.5%]">

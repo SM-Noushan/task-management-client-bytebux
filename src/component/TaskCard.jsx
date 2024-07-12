@@ -9,13 +9,13 @@ import Button from "./Button";
 
 const TaskCard = ({ task, updateTask, deleteTask }) => {
   const dispatch = useDispatch();
-  const { addModalState, updateModalState, deleteModalState } = useSelector(
+  const { updateModalState, deleteModalState } = useSelector(
     (state) => state.modalState
   );
 
   return (
     <div className="bg-gray-100 text-gray-950 rounded-md">
-      <div className="flex flex-col justify-between p-6 lg:p-10 gap-2">
+      <div className="flex flex-col justify-between h-full p-6 lg:p-10 gap-2">
         <div className="space-y-2">
           {/* TASK STATUS */}
           <span
@@ -103,6 +103,7 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
                 />
               </svg>
             </Button>
+            {/* DELETE CONFIRMATION MODAL */}
             <DeleteModal
               isOpen={deleteModalState}
               closeModal={() => dispatch(closeDeleteModal())}
