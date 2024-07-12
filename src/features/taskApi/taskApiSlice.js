@@ -9,9 +9,13 @@ const taskApiSlice = createApi({
       query: () => "/tasks",
       providesTags: ["Task"],
     }),
+    getTaskById: builder.query({
+      query: (id) => `/tasks/${id}`,
+      providesTags: (result, error, id) => [{ type: "Task", _id: id }],
+    }),
     createTask: builder.mutation({
       query: (newTask) => ({
-        url: "tasks",
+        url: "/tasks",
         method: "POST",
         body: newTask,
       }),
@@ -39,6 +43,7 @@ export default taskApiSlice;
 
 export const {
   useGetTasksQuery,
+  useGetTaskByIdQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
