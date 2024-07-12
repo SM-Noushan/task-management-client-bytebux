@@ -8,7 +8,7 @@ import {
 import { Fragment } from "react";
 import PropTypes from "prop-types";
 
-const DeleteModal = ({ closeModal, isOpen, handleDelete, id }) => {
+const DeleteModal = ({ closeModal, isOpen, handleDelete, id, setTaskId }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -52,6 +52,7 @@ const DeleteModal = ({ closeModal, isOpen, handleDelete, id }) => {
                   <button
                     onClick={() => {
                       handleDelete(id);
+                      setTaskId("");
                       closeModal();
                     }}
                     type="button"
@@ -77,8 +78,9 @@ const DeleteModal = ({ closeModal, isOpen, handleDelete, id }) => {
 };
 
 DeleteModal.propTypes = {
-  closeModal: PropTypes.func,
   handleDelete: PropTypes.func,
+  closeModal: PropTypes.func,
+  setTaskId: PropTypes.func,
   isOpen: PropTypes.bool,
   id: PropTypes.string,
 };

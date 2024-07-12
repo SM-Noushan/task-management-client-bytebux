@@ -39,8 +39,8 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
     const data = { name, description, status };
     if (!validateForm(data)) return;
     await updateTask(taskId, data);
-    closeUpdateModal();
     setTaskId("");
+    dispatch(closeUpdateModal());
   };
 
   return (
@@ -68,7 +68,7 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
             onClick={() => updateTask(task?._id, { status: "Completed" }, true)}
             disabled={task?.status.toLowerCase() === "completed" ? true : false}
             small={true}
-            className="text-blue-700 border-0 !px-0"
+            className="text-xs sm:text-xm text-blue-700 border-0 !px-0"
           >
             <span>
               {task?.status.toLowerCase() === "completed" ? "Marked" : "Mark"}{" "}
@@ -116,7 +116,7 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
               </svg>
             </Button>
             {/* UPDATE MODAL FORM */}
-            {taskId && (
+            {updateModalState && taskId && (
               <UpdateModal
                 id={taskId}
                 isOpen={updateModalState}
@@ -130,7 +130,10 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
             )}
             {/* DELETE TASK BUTTON */}
             <Button
-              onClick={() => dispatch(openDeleteModal())}
+              onClick={() => {
+                setTaskId(task?._id);
+                dispatch(openDeleteModal());
+              }}
               small={true}
               title="Delete Task"
               className="text-white bg-red-400"
@@ -151,11 +154,18 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
               </svg>
             </Button>
             {/* DELETE CONFIRMATION MODAL */}
-            <DeleteModal
-              isOpen={deleteModalState}
-              closeModal={() => dispatch(closeDeleteModal())}
-              handleDelete={() => deleteTask(task?._id)}
-            />
+            {deleteModalState && taskId && (
+              <DeleteModal
+                id={taskId}
+                setTaskId={setTaskId}
+                isOpen={deleteModalState}
+                closeModal={() => {
+                  setTaskId("");
+                  dispatch(closeDeleteModal());
+                }}
+                handleDelete={deleteTask}
+              />
+            )}
           </div>
         </div>
       </div>
