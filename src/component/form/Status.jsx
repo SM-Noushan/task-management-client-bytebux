@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const Status = ({ error }) => {
+const Status = ({ value = "", error }) => {
   return (
     <div>
       <div
@@ -14,6 +14,7 @@ const Status = ({ error }) => {
         <div className="flex-1 flex items-center justify-around">
           <div className="flex items-center gap-1.5">
             <input
+              defaultChecked={value.toLowerCase() === "completed" && true}
               type="radio"
               className="radio"
               value="Completed"
@@ -23,6 +24,7 @@ const Status = ({ error }) => {
           </div>
           <div className="flex items-center gap-1.5">
             <input
+              defaultChecked={value.toLowerCase() === "not completed" && true}
               type="radio"
               className="radio"
               value="Not Completed"
@@ -38,6 +40,7 @@ const Status = ({ error }) => {
 };
 
 Status.propTypes = {
+  value: PropTypes.string,
   error: PropTypes.string,
 };
 

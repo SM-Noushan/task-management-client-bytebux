@@ -1,17 +1,47 @@
-import { useDispatch, useSelector } from "react-redux";
+import Button from "./Button";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import {
   closeDeleteModal,
+  closeUpdateModal,
   openDeleteModal,
+  openUpdateModal,
 } from "../features/modalState/modalStateSlice";
 import DeleteModal from "./modals/DeleteModal";
-import PropTypes from "prop-types";
-import Button from "./Button";
+import UpdateModal from "./modals/UpdateModal";
+import { useDispatch, useSelector } from "react-redux";
+import formValidation from "../utils/form/formValidation";
+import { setErrors } from "../features/formValidation/formValidationSlice";
 
 const TaskCard = ({ task, updateTask, deleteTask }) => {
+  const [taskId, setTaskId] = useState("");
   const dispatch = useDispatch();
   const { updateModalState, deleteModalState } = useSelector(
     (state) => state.modalState
   );
+
+  // FORM VALIDATION
+  const validateForm = (data) => {
+    const newErrors = formValidation(data);
+    dispatch(setErrors(newErrors));
+    if (!newErrors.title && !newErrors.description && !newErrors.status)
+      return true;
+    else return false;
+  };
+
+  // HANDLE UPDATE TASK DETAILS
+  const handleUpdateTaskForm = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const description = form.description.value;
+    const status = form.status.value;
+    const data = { name, description, status };
+    if (!validateForm(data)) return;
+    await updateTask(taskId, data);
+    closeUpdateModal();
+    setTaskId("");
+  };
 
   return (
     <div className="bg-gray-100 text-gray-950 rounded-md">
@@ -62,6 +92,10 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
           <div className="flex items-center justify-between gap-2">
             {/* UPDATE TASK BUTTON */}
             <Button
+              onClick={() => {
+                setTaskId(task._id);
+                dispatch(openUpdateModal());
+              }}
               small={true}
               title="Update Task"
               className="border-blue-700 text-blue-700"
@@ -81,6 +115,19 @@ const TaskCard = ({ task, updateTask, deleteTask }) => {
                 />
               </svg>
             </Button>
+            {/* UPDATE MODAL FORM */}
+            {taskId && (
+              <UpdateModal
+                id={taskId}
+                isOpen={updateModalState}
+                submitForm={handleUpdateTaskForm}
+                closeModal={() => {
+                  setTaskId("");
+                  dispatch(closeUpdateModal());
+                  dispatch(setErrors({}));
+                }}
+              />
+            )}
             {/* DELETE TASK BUTTON */}
             <Button
               onClick={() => dispatch(openDeleteModal())}

@@ -36,7 +36,7 @@ function App() {
     else return false;
   };
 
-  // add new task
+  // HANDLE NEW TASK FORM
   const handleNewTaskForm = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -54,18 +54,23 @@ function App() {
     }
   };
 
-  // update task in db
+  // HANDLE UPDATE TASK DETAILS
   const handleUpdate = async (id, updatedTask, status = false) => {
     try {
-      await updateTask({ id, updatedTask });
-      if (status) return toast.success("Status updated"); //for mark as completed func
-      toast.success("Task updated"); //for updating task details
+      const { data: res } = await updateTask({ id, updatedTask });
+      if (res?.modifiedCount)
+        if (status)
+          //for mark as completed func
+          return toast.success("Status updated");
+        //for updating task details
+        else toast.success("Task updated");
+      else toast.success("Nothing to update");
     } catch (error) {
       toast.error(error?.message || "Error! Try again");
     }
   };
 
-  // delete task from db
+  // HANDLE DELETE TASKS
   const handleDelete = async (id) => {
     try {
       await deleteTask(id);
@@ -151,13 +156,17 @@ function App() {
       {/* ADD NEW TASK MODAL FORM */}
       <AddModal
         isOpen={addModalState}
-        closeModal={() => dispatch(closeAddModal())}
+        closeModal={() => {
+          dispatch(closeAddModal());
+          dispatch(setErrors({}));
+        }}
         submitForm={handleNewTaskForm}
       />
 
       {/* ADD NEW TASK BUTTON */}
       <div className="fixed bottom-[5.5%] right-[5.5%]">
         <Button
+          onClick={() => dispatch(openAddModal())}
           title={"Add New Task"}
           className="border-blue-700 bg-gray-50 text-blue-700 !p-2"
         >

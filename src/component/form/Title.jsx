@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const Title = ({ error }) => {
+const Title = ({ value = "", error }) => {
   return (
     <div className="space-y-1">
       <label
@@ -18,6 +18,7 @@ const Title = ({ error }) => {
         name="name"
         id="name"
         type="text"
+        defaultValue={value}
         placeholder="Title"
         required
       />
@@ -28,6 +29,7 @@ const Title = ({ error }) => {
 
 Title.propTypes = {
   error: PropTypes.string,
+  value: PropTypes.string,
 };
 
 export default Title;
